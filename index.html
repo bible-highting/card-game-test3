@@ -281,25 +281,44 @@
     <!-- 환경 설정 스크립트들 (script.js보다 먼저 로드) -->
     <script src="env-loader.js"></script>
     <script>
-        // 빌드 시 생성된 설정 파일 로드 시도
-        function loadBuildConfig() {
-            const script = document.createElement('script');
-            script.src = 'supabase-config.js';
-            script.onload = function() {
-                console.log('✅ 빌드 시 생성된 설정 파일 로드됨');
-                window.GAME_CONFIG = window.SUPABASE_CONFIG;
-            };
-            script.onerror = function() {
-                console.log('🔄 설정 파일 없음, config.js 사용');
-                // 기본 config.js 로드
-                const configScript = document.createElement('script');
-                configScript.src = 'config.js';
-                document.head.appendChild(configScript);
-            };
-            document.head.appendChild(script);
+        // 환경별 설정 로드
+        async function loadConfig() {
+            const isProduction = window.location.hostname !== 'localhost' && 
+                                window.location.hostname !== '127.0.0.1' && 
+                                window.location.hostname !== '';
+            
+            if (isProduction) {
+                try {
+                    console.log('🚀 프로덕션 환경: API에서 설정 로드 시도...');
+                    const response = await fetch('/api/env');
+                    if (response.ok) {
+                        const envCode = await response.text();
+                        eval(envCode);
+                        console.log('✅ Vercel API에서 환경 변수 로드 완료');
+                        
+                        // SUPABASE_CONFIG를 GAME_CONFIG로 변환
+                        if (window.ENV) {
+                            window.SUPABASE_CONFIG = {
+                                url: window.ENV.SUPABASE_URL,
+                                anonKey: window.ENV.SUPABASE_ANON_KEY
+                            };
+                        }
+                        return;
+                    }
+                } catch (error) {
+                    console.warn('⚠️ API 환경 변수 로드 실패:', error);
+                }
+            }
+            
+            // 개발 환경이거나 API 실패 시 config.js 사용
+            console.log('🔄 config.js 시스템 사용');
+            const configScript = document.createElement('script');
+            configScript.src = 'config.js';
+            configScript.onload = () => console.log('✅ config.js 로드 완료');
+            document.head.appendChild(configScript);
         }
         
-        loadBuildConfig();
+        loadConfig();
     </script>
     <script src="script.js"></script>
 </body>

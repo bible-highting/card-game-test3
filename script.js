@@ -888,21 +888,35 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// 설정 로드 완료 콜백
-window.onConfigLoaded = function() {
-    console.log('✅ 게임 설정 로드 완료');
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initGame);
-    } else {
-        initGame();
+// 설정 대기 및 게임 초기화
+function waitForConfigAndStart() {
+    const maxWait = 5000; // 5초 대기
+    const startTime = Date.now();
+    
+    function checkConfig() {
+        // 설정이 로드되었는지 확인
+        if (window.SUPABASE_CONFIG || window.GAME_CONFIG || window.ENV) {
+            console.log('✅ 설정 로드 완료 - 게임 시작');
+            initGame();
+            return;
+        }
+        
+        // 타임아웃 체크
+        if (Date.now() - startTime > maxWait) {
+            console.warn('⚠️ 설정 로드 타임아웃 - 기본값으로 시작');
+            initGame();
+            return;
+        }
+        
+        // 100ms 후 재시도
+        setTimeout(checkConfig, 100);
     }
-};
+    
+    checkConfig();
+}
 
-// 게임 시작 (설정이 이미 로드된 경우)
+// DOM 로드 완료 후 설정 대기
 window.addEventListener('DOMContentLoaded', () => {
-    // 개발 환경이거나 설정이 이미 로드된 경우 즉시 시작
-    if (window.GAME_CONFIG) {
-        initGame();
-    }
-    // 프로덕션에서는 onConfigLoaded 콜백에서 시작됨
+    console.log('📱 DOM 로드 완료 - 설정 확인 중...');
+    waitForConfigAndStart();
 });

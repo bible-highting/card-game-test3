@@ -1,5 +1,5 @@
 // Vercel Serverless Function으로 환경 변수를 클라이언트에 안전하게 전달
-export default function handler(request, response) {
+module.exports = function handler(request, response) {
     // CORS 헤더 설정
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.setHeader('Access-Control-Allow-Methods', 'GET');
@@ -20,4 +20,4 @@ export default function handler(request, response) {
     
     response.setHeader('Content-Type', 'application/javascript');
     response.status(200).send(jsCode);
-}
+};

@@ -16,8 +16,17 @@ const IS_PRODUCTION = window.location.hostname !== 'localhost' &&
                      window.location.hostname !== '';
 const IS_DEVELOPMENT = !IS_PRODUCTION;
 
-// 수파베이스 설정 (config.js에서 가져옴)
+// 수파베이스 설정 (빌드 시 생성되거나 config.js에서 가져옴)
 function getSupabaseConfig() {
+    // 빌드 시 생성된 설정이 있는 경우
+    if (window.SUPABASE_CONFIG) {
+        return {
+            url: window.SUPABASE_CONFIG.url,
+            key: window.SUPABASE_CONFIG.anonKey
+        };
+    }
+    
+    // config.js 기반 설정이 있는 경우
     if (window.GAME_CONFIG) {
         return {
             url: window.GAME_CONFIG.supabaseUrl,
@@ -26,10 +35,11 @@ function getSupabaseConfig() {
     }
     
     // fallback (설정이 로드되지 않은 경우)
-    console.warn('⚠️ 게임 설정이 로드되지 않았습니다. 기본값을 사용합니다.');
+    console.error('❌ Supabase 설정을 찾을 수 없습니다!');
+    console.info('💡 환경 변수나 설정 파일을 확인해주세요.');
     return {
-        url: 'YOUR_SUPABASE_URL_HERE',
-        key: 'YOUR_SUPABASE_ANON_KEY_HERE'
+        url: '',
+        key: ''
     };
 }
 

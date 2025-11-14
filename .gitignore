@@ -4,6 +4,9 @@
 .env.development
 .env.production
 
+# 빌드 시 자동 생성되는 설정 파일들
+supabase-config.js
+
 # 의존성
 node_modules/
 npm-debug.log*

@@ -24,10 +24,11 @@ Canvas API와 JavaScript로 만든 인터랙티브한 카드 뒤집기 메모리
 ## 🛠️ 기술 스택
 
 - **HTML5 Canvas**: 모든 그래픽 렌더링
-- **Vanilla JavaScript**: 게임 로직 및 애니메이션
+- **Vanilla JavaScript**: 게임 로직 및 애니메이션  
 - **CSS3**: 배경 그라데이션 및 레이아웃
 - **Supabase**: 점수 데이터베이스 및 실시간 순위표
 - **Context7**: Canvas API 문서 참조
+- **환경 변수 시스템**: 보안 키 관리 및 자동 빌드 설정
 
 ## 🎯 게임 규칙
 
@@ -178,6 +179,79 @@ CREATE TABLE game_scores (
 - 실시간 멀티플레이어 모드
 - 일일/주간/월간 챌린지
 
-## 📄 라이선스
+## � 개발 환경 설정
+
+### 로컬 개발 시작하기
+
+1. **저장소 클론**
+   ```bash
+   git clone https://github.com/bible-highting/card-game-test3.git
+   cd card-game-test3
+   ```
+
+2. **환경 변수 설정**
+   `.env.local` 파일 생성:
+   ```env
+   SUPABASE_URL=https://your-project-id.supabase.co
+   SUPABASE_ANON_KEY=your-anon-key-here
+   ```
+
+3. **개발 서버 실행**
+   ```bash
+   # 자동 설정 파일 생성 + 서버 시작
+   npm run dev
+   
+   # 또는 직접 실행
+   ./dev-server.sh
+   ```
+
+4. **브라우저에서 열기**
+   ```
+   http://localhost:8000
+   ```
+
+### 프로덕션 배포
+
+#### Vercel 배포
+1. **GitHub 연결**: Vercel에서 저장소 가져오기
+2. **환경 변수 설정**: 
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+3. **자동 빌드**: `build-config.sh`가 자동으로 설정 파일 생성
+4. **배포 완료**: 환경 변수가 안전하게 주입됨
+
+#### 빌드 스크립트
+```bash
+# 수동으로 설정 파일 생성 (환경 변수 필요)
+npm run build
+
+# 또는
+./build-config.sh
+```
+
+### 🔐 보안 시스템
+
+- **환경 변수 분리**: API 키가 소스코드에 포함되지 않음
+- **자동 빌드**: 배포 시 환경 변수로 설정 파일 자동 생성
+- **Git 안전**: 민감한 정보는 `.gitignore`로 제외
+- **개발/프로덕션 분리**: 환경별 다른 설정 시스템
+
+### 📁 프로젝트 구조
+```
+📁 프로젝트/
+├── 🔓 index.html              # 메인 게임 페이지
+├── 🔓 script.js               # 게임 로직
+├── 🔓 config.js               # 설정 템플릿 (fallback)
+├── 🔓 env-loader.js           # 개발환경 로더
+├── 🔒 .env.local              # 로컬 환경 변수 (Git 제외)
+├── 🔒 supabase-config.js      # 빌드 시 생성 (Git 제외)
+├── 🔓 build-config.sh         # 빌드 스크립트
+├── 🔓 dev-server.sh           # 개발 서버 스크립트  
+├── 🔓 vercel.json             # Vercel 배포 설정
+├── 🔓 package.json            # NPM 스크립트
+└── 🔓 README.md               # 프로젝트 문서
+```
+
+## �📄 라이선스
 
 MIT License - 자유롭게 수정하고 배포 가능합니다.

@@ -280,7 +280,27 @@
 
     <!-- 환경 설정 스크립트들 (script.js보다 먼저 로드) -->
     <script src="env-loader.js"></script>
-    <script src="config.js"></script>
+    <script>
+        // 빌드 시 생성된 설정 파일 로드 시도
+        function loadBuildConfig() {
+            const script = document.createElement('script');
+            script.src = 'supabase-config.js';
+            script.onload = function() {
+                console.log('✅ 빌드 시 생성된 설정 파일 로드됨');
+                window.GAME_CONFIG = window.SUPABASE_CONFIG;
+            };
+            script.onerror = function() {
+                console.log('🔄 설정 파일 없음, config.js 사용');
+                // 기본 config.js 로드
+                const configScript = document.createElement('script');
+                configScript.src = 'config.js';
+                document.head.appendChild(configScript);
+            };
+            document.head.appendChild(script);
+        }
+        
+        loadBuildConfig();
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

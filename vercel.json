@@ -15,5 +15,5 @@
   ],
   "outputDirectory": ".",
   "installCommand": "",
-  "buildCommand": ""
+  "buildCommand": "./build-config.sh"
 }

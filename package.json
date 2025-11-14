@@ -1,0 +1,30 @@
+{
+  "name": "card-flip-game",
+  "version": "1.0.0",
+  "description": "Canvas API로 만든 카드 뒤집기 메모리 게임 with Supabase 리더보드",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'Static files ready for deployment'"
+  },
+  "keywords": [
+    "card-game",
+    "memory-game",
+    "canvas-api",
+    "javascript",
+    "html5-game",
+    "supabase",
+    "leaderboard"
+  ],
+  "author": "Card Game Developer",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/card-flip-game.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/card-flip-game/issues"
+  },
+  "homepage": "https://github.com/your-username/card-flip-game#readme"
+}

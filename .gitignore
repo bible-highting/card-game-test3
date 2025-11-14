@@ -1,0 +1,47 @@
+# 의존성
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 로그
+logs
+*.log
+
+# 환경 변수 (실제 프로젝트에서는 .env 파일 사용)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS 생성 파일
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 에디터
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 배포 관련
+dist/
+build/
+
+# 캐시
+.cache/
+.parcel-cache/
+
+# 테스트 커버리지
+coverage/
+
+# 백업 파일
+*.bak
+*.tmp

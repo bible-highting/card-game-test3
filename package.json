@@ -5,7 +5,8 @@
   "main": "index.html",
   "scripts": {
     "dev": "./dev-server.sh",
-    "build": "./build-config.sh",
+    "build": "echo 'Static files ready for deployment'",
+    "vercel-build": "echo 'Vercel build completed - static files ready'",
     "start": "python3 -m http.server 8000 || python -m http.server 8000 || npx serve -s . -p 8000",
     "config": "./build-config.sh"
   },

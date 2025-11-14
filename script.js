@@ -11,12 +11,27 @@ let timer;
 let currentScore = 0;
 
 // 환경 설정
-const IS_PRODUCTION = window.location.hostname !== 'localhost';
+const IS_PRODUCTION = window.location.hostname !== 'localhost' && 
+                     window.location.hostname !== '127.0.0.1' && 
+                     window.location.hostname !== '';
 const IS_DEVELOPMENT = !IS_PRODUCTION;
 
-// 수파베이스 설정
-const SUPABASE_URL = 'https://fvfqzhmqfiuctelppaeh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2ZnF6aG1xZml1Y3RlbHBwYWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwMzc3NzIsImV4cCI6MjA3ODYxMzc3Mn0.c2HeYl2lI0QauIdBM7QhLXc-tiJ8rm6adQAFLN4wVHM';
+// 수파베이스 설정 (config.js에서 가져옴)
+function getSupabaseConfig() {
+    if (window.GAME_CONFIG) {
+        return {
+            url: window.GAME_CONFIG.supabaseUrl,
+            key: window.GAME_CONFIG.supabaseAnonKey
+        };
+    }
+    
+    // fallback (설정이 로드되지 않은 경우)
+    console.warn('⚠️ 게임 설정이 로드되지 않았습니다. 기본값을 사용합니다.');
+    return {
+        url: 'YOUR_SUPABASE_URL_HERE',
+        key: 'YOUR_SUPABASE_ANON_KEY_HERE'
+    };
+}
 
 // 프로덕션 환경에서 에러 로깅
 if (IS_PRODUCTION) {
@@ -561,12 +576,13 @@ function gameLoop() {
 
 // 수파베이스 API 함수들
 async function saveScoreToSupabase(playerName, attempts, completionTime) {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/game_scores`, {
+    const config = getSupabaseConfig();
+    const response = await fetch(`${config.url}/rest/v1/game_scores`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'apikey': SUPABASE_ANON_KEY
+            'Authorization': `Bearer ${config.key}`,
+            'apikey': config.key
         },
         body: JSON.stringify({
             player_name: playerName,
@@ -585,12 +601,13 @@ async function saveScoreToSupabase(playerName, attempts, completionTime) {
 }
 
 async function getLeaderboard(limit = 20) {
+    const config = getSupabaseConfig();
     const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/game_scores?select=*&order=score.desc,created_at.desc&limit=${limit}`,
+        `${config.url}/rest/v1/game_scores?select=*&order=score.desc,created_at.desc&limit=${limit}`,
         {
             headers: {
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                'apikey': SUPABASE_ANON_KEY
+                'Authorization': `Bearer ${config.key}`,
+                'apikey': config.key
             }
         }
     );
@@ -603,12 +620,13 @@ async function getLeaderboard(limit = 20) {
 }
 
 async function getGameStats() {
+    const config = getSupabaseConfig();
     const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/game_scores?select=score,attempts,completion_time,created_at`,
+        `${config.url}/rest/v1/game_scores?select=score,attempts,completion_time,created_at`,
         {
             headers: {
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                'apikey': SUPABASE_ANON_KEY
+                'Authorization': `Bearer ${config.key}`,
+                'apikey': config.key
             }
         }
     );
@@ -860,5 +878,21 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// 게임 시작
-window.addEventListener('DOMContentLoaded', initGame);
+// 설정 로드 완료 콜백
+window.onConfigLoaded = function() {
+    console.log('✅ 게임 설정 로드 완료');
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGame);
+    } else {
+        initGame();
+    }
+};
+
+// 게임 시작 (설정이 이미 로드된 경우)
+window.addEventListener('DOMContentLoaded', () => {
+    // 개발 환경이거나 설정이 이미 로드된 경우 즉시 시작
+    if (window.GAME_CONFIG) {
+        initGame();
+    }
+    // 프로덕션에서는 onConfigLoaded 콜백에서 시작됨
+});

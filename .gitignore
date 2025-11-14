@@ -1,3 +1,9 @@
+# 환경 변수 파일들 (민감한 정보 포함) - 중요!
+.env
+.env.local
+.env.development
+.env.production
+
 # 의존성
 node_modules/
 npm-debug.log*
